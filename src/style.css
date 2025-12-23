@@ -1,0 +1,70 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap');
+
+@layer base {
+  :root {
+    /* Monokai Color Palette */
+    --monokai-bg: #272822;
+    --monokai-bg-light: #3E3D32;
+    --monokai-bg-lighter: #49483E;
+    --monokai-fg: #F8F8F2;
+    --monokai-comment: #75715E;
+    --monokai-green: #A6E22E;
+    --monokai-orange: #FD971F;
+    --monokai-pink: #F92672;
+    --monokai-purple: #AE81FF;
+    --monokai-yellow: #E6DB74;
+    --monokai-cyan: #66D9EF;
+    --monokai-red: #F92672;
+    
+    /* IDE UI Colors */
+    --sidebar-bg: #21211E;
+    --sidebar-hover: #2D2D2A;
+    --statusbar-bg: #1E1E1E;
+    --tab-active: #272822;
+    --tab-inactive: #1E1E1E;
+    --border-color: #3E3D32;
+    --selection-bg: #49483E;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    background-color: var(--monokai-bg);
+    color: var(--monokai-fg);
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    overflow: hidden;
+  }
+
+  code {
+    font-family: 'Fira Code', 'JetBrains Mono', monospace;
+    font-size: 0.9em;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--monokai-bg);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--monokai-bg-lighter);
+    border-radius: 6px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--monokai-comment);
+  }
+
+  /* Selection */
+  ::selection {
+    background: var(--selection-bg);
+    color: var(--monokai-fg);
+  }
+}
