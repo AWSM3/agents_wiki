@@ -1,44 +1,56 @@
 <template>
   <div id="app" class="ide-container">
     <!-- Sidebar -->
-    <aside class="ide-sidebar">
+    <aside class="ide-sidebar" v-if="sidebarVisible">
       <div class="sidebar-header">
-        <div class="flex items-center gap-2 px-4 py-3">
-          <span class="text-monokai-green text-lg">▶</span>
-          <span class="text-monokai-fg font-semibold">EXPLORER</span>
-        </div>
+        <span class="sidebar-title">EXPLORER</span>
       </div>
       
       <nav class="sidebar-content">
-        <div class="folder-section">
-          <div class="folder-header">
-            <span class="text-monokai-orange">📁</span>
-            <span class="text-monokai-cyan ml-2">content/</span>
+        <!-- Home Link -->
+        <router-link 
+          to="/" 
+          class="file-item"
+          :class="{ active: $route.path === '/' }"
+          @click="openTab({ title: 'Home', path: '/', type: 'home' })"
+        >
+          <span class="icon">🏠</span>
+          <span>Home</span>
+        </router-link>
+        
+        <!-- Directories -->
+        <div 
+          v-for="dir in directories" 
+          :key="dir"
+          class="folder-section"
+        >
+          <div 
+            class="folder-header"
+            @click="toggleFolder(dir)"
+          >
+            <span class="chevron">{{ expandedFolders.has(dir) ? '▼' : '▶' }}</span>
+            <span class="icon">📁</span>
+            <span>{{ dir }}/</span>
           </div>
           
-          <div class="folder-items">
-            <router-link 
-              to="/" 
-              class="file-item"
-              :class="{ active: $route.path === '/' }"
+          <div v-if="expandedFolders.has(dir)" class="folder-items">
+            <router-link
+              v-for="post in getPostsByDir(dir)"
+              :key="`${post.dir}/${post.id}`"
+              :to="{ name: 'Post', params: { dir: post.dir, id: post.id } }"
+              class="file-item nested"
+              :class="{ active: isActivePost(post.dir, post.id) }"
+              @click="openTab({ 
+                title: `${post.id}.md`, 
+                path: `/post/${post.dir}/${post.id}`,
+                dir: post.dir,
+                id: post.id,
+                type: 'post'
+              })"
             >
-              <span class="text-monokai-comment">📄</span>
-              <span class="ml-2">index.md</span>
+              <span class="icon">📄</span>
+              <span>{{ post.id }}.md</span>
             </router-link>
-            
-            <div class="subfolder">
-              <div class="subfolder-header">
-                <span class="text-monokai-yellow">📂</span>
-                <span class="text-monokai-purple ml-2">blog/</span>
-              </div>
-            </div>
-            
-            <div class="subfolder">
-              <div class="subfolder-header">
-                <span class="text-monokai-yellow">📂</span>
-                <span class="text-monokai-purple ml-2">docs/</span>
-              </div>
-            </div>
           </div>
         </div>
       </nav>
@@ -47,11 +59,21 @@
     <!-- Main Content Area -->
     <main class="ide-main">
       <!-- Tab Bar -->
-      <div class="tab-bar">
-        <div class="tab active">
-          <span class="tab-icon">📝</span>
-          <span class="tab-title">{{ currentTabTitle }}</span>
-          <span class="tab-close">×</span>
+      <div class="tab-bar" v-if="openTabs.length > 0">
+        <div 
+          v-for="tab in openTabs"
+          :key="tab.path"
+          class="tab"
+          :class="{ active: isActiveTab(tab) }"
+          @click="navigateToTab(tab)"
+        >
+          <span class="tab-icon">{{ tab.type === 'home' ? '🏠' : '📝' }}</span>
+          <span class="tab-title">{{ tab.title }}</span>
+          <span 
+            class="tab-close"
+            @click.stop="closeTab(tab)"
+            v-if="openTabs.length > 1"
+          >×</span>
         </div>
       </div>
 
@@ -63,23 +85,21 @@
       <!-- Status Bar -->
       <div class="status-bar">
         <div class="status-left">
+          <button 
+            class="status-item clickable"
+            @click="toggleSidebar"
+          >
+            <span>☰</span>
+            <span class="ml-1">{{ sidebarVisible ? 'Hide' : 'Show' }} Explorer</span>
+          </button>
           <span class="status-item">
             <span class="text-monokai-green">●</span>
             <span class="ml-1">Markdown</span>
           </span>
-          <span class="status-item">
-            <span class="text-monokai-cyan">UTF-8</span>
-          </span>
-          <span class="status-item">
-            <span class="text-monokai-purple">LF</span>
-          </span>
         </div>
         <div class="status-right">
           <span class="status-item">
-            <span class="text-monokai-orange">Vue 3</span>
-          </span>
-          <span class="status-item">
-            <span class="text-monokai-yellow">⚡ Vite</span>
+            <span class="text-monokai-cyan">{{ openTabs.length }} tab{{ openTabs.length !== 1 ? 's' : '' }}</span>
           </span>
         </div>
       </div>
@@ -88,17 +108,108 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, computed, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { groupByDirectory } from './utils/load-content'
 
 const route = useRoute()
+const router = useRouter()
 
-const currentTabTitle = computed(() => {
-  if (route.name === 'Post') {
-    return `${route.params.dir}/${route.params.id}.md`
+// Sidebar state
+const sidebarVisible = ref(true)
+const expandedFolders = ref(new Set<string>())
+
+// Tabs state
+interface Tab {
+  title: string
+  path: string
+  type: 'home' | 'post'
+  dir?: string
+  id?: string
+}
+
+const openTabs = ref<Tab[]>([
+  { title: 'Home', path: '/', type: 'home' }
+])
+
+// Directory data
+const grouped = groupByDirectory()
+const directories = computed(() => Array.from(grouped.keys()).sort())
+
+const getPostsByDir = (dir: string) => grouped.get(dir) || []
+
+// Functions
+const toggleSidebar = () => {
+  sidebarVisible.value = !sidebarVisible.value
+}
+
+const toggleFolder = (dir: string) => {
+  if (expandedFolders.value.has(dir)) {
+    expandedFolders.value.delete(dir)
+  } else {
+    expandedFolders.value.add(dir)
   }
-  return 'index.md'
-})
+}
+
+const isActivePost = (dir: string, id: string) => {
+  return route.name === 'Post' && 
+         route.params.dir === dir && 
+         route.params.id === id
+}
+
+const isActiveTab = (tab: Tab) => {
+  if (tab.type === 'home') {
+    return route.path === '/'
+  }
+  return route.name === 'Post' && 
+         route.params.dir === tab.dir && 
+         route.params.id === tab.id
+}
+
+const openTab = (tab: Tab) => {
+  const existingTab = openTabs.value.find(t => t.path === tab.path)
+  if (!existingTab) {
+    openTabs.value.push(tab)
+  }
+}
+
+const closeTab = (tab: Tab) => {
+  const index = openTabs.value.findIndex(t => t.path === tab.path)
+  if (index > -1) {
+    openTabs.value.splice(index, 1)
+    
+    // Navigate to another tab if closing active tab
+    if (isActiveTab(tab) && openTabs.value.length > 0) {
+      const newTab = openTabs.value[Math.max(0, index - 1)]
+      navigateToTab(newTab)
+    }
+  }
+}
+
+const navigateToTab = (tab: Tab) => {
+  if (tab.type === 'home') {
+    router.push('/')
+  } else {
+    router.push({ name: 'Post', params: { dir: tab.dir, id: tab.id } })
+  }
+}
+
+// Auto-open current route tab
+watch(() => route.path, (newPath) => {
+  if (route.name === 'Post') {
+    const dir = route.params.dir as string
+    const id = route.params.id as string
+    openTab({
+      title: `${id}.md`,
+      path: newPath,
+      dir,
+      id,
+      type: 'post'
+    })
+    // Auto-expand folder
+    expandedFolders.value.add(dir)
+  }
+}, { immediate: true })
 </script>
 
 <style scoped>
@@ -112,17 +223,26 @@ const currentTabTitle = computed(() => {
 
 /* Sidebar */
 .ide-sidebar {
-  width: 280px;
+  width: 240px;
   background: var(--sidebar-bg);
   border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  transition: width 0.3s ease, margin-left 0.3s ease;
 }
 
 .sidebar-header {
+  padding: 0.75rem 1rem;
   border-bottom: 1px solid var(--border-color);
-  background: var(--sidebar-bg);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--monokai-comment);
+  letter-spacing: 0.5px;
+}
+
+.sidebar-title {
+  text-transform: uppercase;
 }
 
 .sidebar-content {
@@ -131,59 +251,71 @@ const currentTabTitle = computed(() => {
   padding: 0.5rem 0;
 }
 
+/* Folder Section */
 .folder-section {
-  padding: 0.5rem 0;
+  margin: 0.25rem 0;
 }
 
 .folder-header {
-  padding: 0.5rem 1rem;
   display: flex;
   align-items: center;
-  font-weight: 600;
-  font-size: 0.9rem;
+  gap: 0.5rem;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.85rem;
+  color: var(--monokai-fg);
+  cursor: pointer;
+  transition: background 0.15s ease;
+  user-select: none;
+}
+
+.folder-header:hover {
+  background: var(--sidebar-hover);
+}
+
+.chevron {
+  font-size: 0.7rem;
+  color: var(--monokai-comment);
+  transition: transform 0.2s ease;
+  width: 12px;
+  display: inline-block;
+}
+
+.icon {
+  font-size: 1rem;
 }
 
 .folder-items {
-  padding-left: 1rem;
+  animation: slideDown 0.2s ease-out;
 }
 
+/* File Item */
 .file-item {
   display: flex;
   align-items: center;
-  padding: 0.4rem 1rem;
+  gap: 0.5rem;
+  padding: 0.4rem 0.75rem;
   font-size: 0.85rem;
   color: var(--monokai-fg);
   cursor: pointer;
   transition: all 0.15s ease;
+  text-decoration: none;
   border-left: 2px solid transparent;
+}
+
+.file-item.nested {
+  padding-left: 3rem;
+  margin-left: 0.5rem;
+  border-left: 1px solid var(--border-color);
 }
 
 .file-item:hover {
   background: var(--sidebar-hover);
-  color: var(--monokai-cyan);
 }
 
 .file-item.active {
   background: var(--monokai-bg-light);
   border-left-color: var(--monokai-green);
   color: var(--monokai-green);
-}
-
-.subfolder {
-  margin: 0.25rem 0;
-}
-
-.subfolder-header {
-  display: flex;
-  align-items: center;
-  padding: 0.4rem 1rem;
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: background 0.15s ease;
-}
-
-.subfolder-header:hover {
-  background: var(--sidebar-hover);
 }
 
 /* Main Content */
@@ -200,55 +332,65 @@ const currentTabTitle = computed(() => {
   background: var(--tab-inactive);
   border-bottom: 1px solid var(--border-color);
   overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.tab-bar::-webkit-scrollbar {
+  height: 4px;
 }
 
 .tab {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.6rem 1rem;
+  padding: 0.5rem 1rem;
   background: var(--tab-inactive);
   border-right: 1px solid var(--border-color);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: var(--monokai-comment);
   cursor: pointer;
   transition: all 0.15s ease;
-  min-width: 150px;
+  white-space: nowrap;
+  min-width: 120px;
+  max-width: 200px;
 }
 
 .tab.active {
   background: var(--tab-active);
   color: var(--monokai-fg);
-  border-bottom: 2px solid var(--monokai-green);
 }
 
 .tab:hover {
   background: var(--monokai-bg-light);
+  color: var(--monokai-fg);
 }
 
 .tab-icon {
-  font-size: 1rem;
+  font-size: 0.9rem;
+  flex-shrink: 0;
 }
 
 .tab-title {
   flex: 1;
-  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .tab-close {
   opacity: 0;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   line-height: 1;
   transition: opacity 0.15s ease;
+  flex-shrink: 0;
+  padding: 0 0.25rem;
 }
 
 .tab:hover .tab-close {
-  opacity: 1;
+  opacity: 0.7;
 }
 
 .tab-close:hover {
+  opacity: 1 !important;
   color: var(--monokai-red);
 }
 
@@ -264,40 +406,73 @@ const currentTabTitle = computed(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.3rem 1rem;
+  padding: 0.25rem 0.75rem;
   background: var(--statusbar-bg);
   border-top: 1px solid var(--border-color);
-  font-size: 0.75rem;
-  color: var(--monokai-fg);
+  font-size: 0.7rem;
+  color: var(--monokai-comment);
 }
 
 .status-left,
 .status-right {
   display: flex;
-  gap: 1rem;
+  gap: 0.75rem;
+  align-items: center;
 }
 
 .status-item {
   display: flex;
   align-items: center;
   gap: 0.25rem;
+  padding: 0.15rem 0.35rem;
+  border-radius: 2px;
+  transition: background 0.15s ease;
+}
+
+.status-item.clickable {
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  color: var(--monokai-comment);
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.status-item.clickable:hover {
+  background: var(--monokai-bg-light);
+  color: var(--monokai-fg);
+}
+
+/* Utility classes */
+.ml-1 {
+  margin-left: 0.25rem;
 }
 
 /* Animations */
-@keyframes slideIn {
+@keyframes slideDown {
   from {
     opacity: 0;
-    transform: translateX(-10px);
+    max-height: 0;
   }
   to {
     opacity: 1;
-    transform: translateX(0);
+    max-height: 500px;
   }
 }
 
-.file-item,
-.subfolder-header {
-  animation: slideIn 0.2s ease-out;
+/* Responsive */
+@media (max-width: 768px) {
+  .ide-sidebar {
+    position: absolute;
+    height: 100%;
+    z-index: 100;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
+  }
+  
+  .tab {
+    min-width: 100px;
+    max-width: 150px;
+  }
 }
 </style>
 

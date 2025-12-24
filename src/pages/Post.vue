@@ -1,70 +1,40 @@
 <template>
-  <main class="editor-content">
-    <div class="code-editor">
-      <!-- Line Numbers Column -->
-      <div class="line-numbers">
-        <div 
-          v-for="n in 100" 
-          :key="n" 
-          class="line-number"
-        >
-          {{ n }}
-        </div>
-      </div>
-
-      <!-- Content Column -->
-      <div class="content-area">
-        <!-- Breadcrumb Navigation -->
+  <main class="post-content">
+    <article v-if="post" class="article">
+      <!-- Header -->
+      <header class="article-header">
         <div class="breadcrumb">
           <router-link to="/" class="breadcrumb-link">
-            <span class="keyword">import</span>
-            <span class="brace"> { </span>
-            <span class="function">Home</span>
-            <span class="brace"> } </span>
-            <span class="keyword">from</span>
-            <span class="string"> './index'</span>
+            <span>← Back to Home</span>
           </router-link>
         </div>
 
-        <article v-if="post" class="markdown-content">
-          <!-- File Header -->
-          <div class="file-header">
-            <span class="comment">/**</span>
-            <br>
-            <span class="comment"> * File: {{ dir }}/{{ id }}.md</span>
-            <br>
-            <span class="comment" v-if="post.meta.date"> * Date: {{ formatDate(post.meta.date as string) }}</span>
-            <br v-if="post.meta.date">
-            <span class="comment"> * Title: {{ post.title }}</span>
-            <br>
-            <span class="comment"> */</span>
-          </div>
-
-          <!-- Title -->
-          <div class="post-title">
-            <span class="keyword">export</span>
-            <span class="keyword"> const </span>
-            <span class="class-name">{{ post.title }}</span>
-            <span class="operator"> = </span>
-            <span class="brace">{</span>
-          </div>
-
-          <!-- Content -->
-          <div class="post-content" v-html="post.html" />
-
-          <div class="post-footer">
-            <span class="brace">}</span>
-          </div>
-        </article>
-
-        <div v-else class="error-block">
-          <span class="keyword">throw new</span>
-          <span class="class-name"> Error</span>
-          <span class="brace">(</span>
-          <span class="string">"Post not found: {{ dir }}/{{ id }}.md"</span>
-          <span class="brace">)</span>
+        <div class="meta-info">
+          <span class="comment">// {{ dir }}/{{ id }}.md</span>
+          <span v-if="post.meta.date" class="meta-date">
+            <span class="operator"> • </span>
+            <span>{{ formatDate(post.meta.date as string) }}</span>
+          </span>
         </div>
-      </div>
+
+        <h1 class="article-title">
+          {{ post.title }}
+        </h1>
+      </header>
+
+      <!-- Content -->
+      <div class="article-body" v-html="post.html" />
+    </article>
+
+    <div v-else class="error-state">
+      <div class="error-icon">⚠️</div>
+      <p class="error-message">
+        <span class="keyword">throw new</span>
+        <span class="class-name"> Error</span>
+        <span class="brace">(</span>
+        <span class="string">"Post not found"</span>
+        <span class="brace">)</span>
+      </p>
     </div>
   </main>
 </template>
@@ -83,76 +53,244 @@ const post = computed(() => findPost(dir.value, id.value))
 const formatDate = (date: string) => {
   return new Date(date).toLocaleDateString('en-US', {
     year: 'numeric',
-    month: 'long',
+    month: 'short',
     day: 'numeric',
   })
 }
 </script>
 
 <style scoped>
-.editor-content {
+.post-content {
   height: 100%;
   overflow-y: auto;
   background: var(--monokai-bg);
   color: var(--monokai-fg);
-}
-
-.code-editor {
-  display: flex;
-  min-height: 100%;
   font-family: 'Fira Code', 'JetBrains Mono', monospace;
-  font-size: 14px;
-  line-height: 1.6;
 }
 
-.line-numbers {
-  background: var(--monokai-bg);
-  color: var(--monokai-comment);
-  padding: 1.5rem 0.5rem;
-  text-align: right;
-  user-select: none;
-  border-right: 1px solid var(--border-color);
-  min-width: 50px;
-  font-size: 13px;
+/* Article */
+.article {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 3rem;
+  animation: fadeIn 0.5s ease-out;
 }
 
-.line-number {
-  padding: 0 0.75rem;
-  height: 1.6em;
-  transition: color 0.15s ease;
+/* Header */
+.article-header {
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--border-color);
 }
 
-.line-number:hover {
-  color: var(--monokai-fg);
-}
-
-.content-area {
-  flex: 1;
-  padding: 1.5rem 2rem;
-  overflow-x: auto;
-}
-
-/* Breadcrumb */
 .breadcrumb {
-  margin-bottom: 2rem;
-  padding: 0.75rem 1rem;
-  background: var(--monokai-bg-light);
-  border-radius: 4px;
-  border-left: 3px solid var(--monokai-cyan);
+  margin-bottom: 1.5rem;
 }
 
 .breadcrumb-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--monokai-comment);
   text-decoration: none;
+  font-size: 0.85rem;
   transition: all 0.2s ease;
-  display: inline-block;
+  padding: 0.5rem 0;
 }
 
 .breadcrumb-link:hover {
-  transform: translateX(-4px);
+  color: var(--monokai-cyan);
 }
 
-.breadcrumb-link:hover .function {
+.meta-info {
+  font-size: 0.8rem;
+  color: var(--monokai-comment);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.meta-date {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.article-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--monokai-green);
+  line-height: 1.2;
+  margin: 0;
+}
+
+/* Article Body */
+.article-body {
+  line-height: 1.7;
+  font-size: 1rem;
+}
+
+.article-body :deep(h1) {
+  color: var(--monokai-green);
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 2rem 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.article-body :deep(h2) {
+  color: var(--monokai-cyan);
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin: 1.8rem 0 1rem;
+}
+
+.article-body :deep(h3) {
+  color: var(--monokai-purple);
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 1.5rem 0 0.8rem;
+}
+
+.article-body :deep(h4) {
   color: var(--monokai-orange);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 1.2rem 0 0.6rem;
+}
+
+.article-body :deep(p) {
+  color: var(--monokai-fg);
+  margin: 1rem 0;
+  line-height: 1.8;
+}
+
+.article-body :deep(a) {
+  color: var(--monokai-cyan);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.article-body :deep(a:hover) {
+  color: var(--monokai-yellow);
+  border-bottom-color: var(--monokai-yellow);
+}
+
+.article-body :deep(code) {
+  background: var(--monokai-bg-lighter);
+  color: var(--monokai-pink);
+  padding: 0.2em 0.5em;
+  border-radius: 3px;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.9em;
+}
+
+.article-body :deep(pre) {
+  background: var(--monokai-bg-light);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 1.5rem;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+.article-body :deep(pre code) {
+  background: none;
+  color: var(--monokai-fg);
+  padding: 0;
+  font-size: 0.9em;
+}
+
+.article-body :deep(blockquote) {
+  border-left: 4px solid var(--monokai-orange);
+  background: var(--monokai-bg-light);
+  padding: 1rem 1.5rem;
+  margin: 1.5rem 0;
+  font-style: italic;
+  color: var(--monokai-comment);
+  border-radius: 4px;
+}
+
+.article-body :deep(ul),
+.article-body :deep(ol) {
+  margin: 1rem 0;
+  padding-left: 2rem;
+}
+
+.article-body :deep(li) {
+  margin: 0.5rem 0;
+  color: var(--monokai-fg);
+}
+
+.article-body :deep(li::marker) {
+  color: var(--monokai-green);
+}
+
+.article-body :deep(strong) {
+  color: var(--monokai-orange);
+  font-weight: 600;
+}
+
+.article-body :deep(em) {
+  color: var(--monokai-purple);
+  font-style: italic;
+}
+
+.article-body :deep(hr) {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 2rem 0;
+}
+
+.article-body :deep(table) {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  background: var(--monokai-bg-light);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.article-body :deep(th) {
+  background: var(--monokai-bg-lighter);
+  color: var(--monokai-green);
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.article-body :deep(td) {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--monokai-fg);
+}
+
+.article-body :deep(tr:hover) {
+  background: var(--monokai-bg-lighter);
+}
+
+/* Error State */
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 2rem;
+  text-align: center;
+}
+
+.error-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.error-message {
+  font-size: 1.1rem;
 }
 
 /* Syntax Highlighting */
@@ -170,15 +308,9 @@ const formatDate = (date: string) => {
   color: var(--monokai-yellow);
 }
 
-.function {
-  color: var(--monokai-green);
-  font-style: italic;
-}
-
 .class-name {
   color: var(--monokai-green);
   font-weight: 600;
-  font-size: 1.1em;
 }
 
 .operator {
@@ -187,190 +319,6 @@ const formatDate = (date: string) => {
 
 .brace {
   color: var(--monokai-fg);
-}
-
-/* Article Sections */
-.markdown-content {
-  animation: fadeIn 0.4s ease-out;
-}
-
-.file-header {
-  margin-bottom: 2rem;
-  padding: 1rem 1.5rem;
-  background: var(--monokai-bg-light);
-  border-radius: 4px;
-  line-height: 1.8;
-}
-
-.post-title {
-  margin: 2rem 0 1.5rem;
-  font-size: 1.2em;
-  font-weight: 600;
-}
-
-.post-content {
-  margin-left: 2rem;
-  padding: 1.5rem 0;
-}
-
-.post-footer {
-  margin-top: 2rem;
-  font-size: 1.2em;
-}
-
-/* Error Block */
-.error-block {
-  background: rgba(249, 38, 114, 0.1);
-  border-left: 3px solid var(--monokai-red);
-  padding: 1.5rem 2rem;
-  margin: 2rem 0;
-  border-radius: 4px;
-  font-size: 1.1em;
-}
-
-/* Markdown Content Styling */
-.post-content :deep(h1) {
-  color: var(--monokai-green);
-  font-size: 2em;
-  font-weight: 700;
-  margin: 1.5rem 0 1rem;
-  border-bottom: 2px solid var(--monokai-bg-lighter);
-  padding-bottom: 0.5rem;
-}
-
-.post-content :deep(h2) {
-  color: var(--monokai-cyan);
-  font-size: 1.6em;
-  font-weight: 600;
-  margin: 1.3rem 0 0.8rem;
-}
-
-.post-content :deep(h3) {
-  color: var(--monokai-purple);
-  font-size: 1.3em;
-  font-weight: 600;
-  margin: 1.2rem 0 0.7rem;
-}
-
-.post-content :deep(h4) {
-  color: var(--monokai-orange);
-  font-size: 1.1em;
-  font-weight: 600;
-  margin: 1rem 0 0.6rem;
-}
-
-.post-content :deep(p) {
-  color: var(--monokai-fg);
-  line-height: 1.8;
-  margin: 1rem 0;
-}
-
-.post-content :deep(a) {
-  color: var(--monokai-cyan);
-  text-decoration: none;
-  border-bottom: 1px solid transparent;
-  transition: all 0.2s ease;
-}
-
-.post-content :deep(a:hover) {
-  color: var(--monokai-yellow);
-  border-bottom-color: var(--monokai-yellow);
-}
-
-.post-content :deep(code) {
-  background: var(--monokai-bg-lighter);
-  color: var(--monokai-pink);
-  padding: 0.2em 0.5em;
-  border-radius: 3px;
-  font-family: 'Fira Code', monospace;
-  font-size: 0.9em;
-}
-
-.post-content :deep(pre) {
-  background: var(--monokai-bg-light);
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  padding: 1.5rem;
-  overflow-x: auto;
-  margin: 1.5rem 0;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-}
-
-.post-content :deep(pre code) {
-  background: none;
-  color: var(--monokai-fg);
-  padding: 0;
-  border-radius: 0;
-  font-size: 0.95em;
-}
-
-.post-content :deep(blockquote) {
-  border-left: 4px solid var(--monokai-orange);
-  background: var(--monokai-bg-light);
-  padding: 1rem 1.5rem;
-  margin: 1.5rem 0;
-  font-style: italic;
-  color: var(--monokai-comment);
-  border-radius: 4px;
-}
-
-.post-content :deep(ul),
-.post-content :deep(ol) {
-  margin: 1rem 0;
-  padding-left: 2rem;
-}
-
-.post-content :deep(li) {
-  margin: 0.5rem 0;
-  color: var(--monokai-fg);
-}
-
-.post-content :deep(li::marker) {
-  color: var(--monokai-green);
-}
-
-.post-content :deep(strong) {
-  color: var(--monokai-orange);
-  font-weight: 600;
-}
-
-.post-content :deep(em) {
-  color: var(--monokai-purple);
-  font-style: italic;
-}
-
-.post-content :deep(hr) {
-  border: none;
-  border-top: 2px solid var(--monokai-bg-lighter);
-  margin: 2rem 0;
-}
-
-.post-content :deep(table) {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 1.5rem 0;
-  background: var(--monokai-bg-light);
-  border-radius: 6px;
-  overflow: hidden;
-}
-
-.post-content :deep(th) {
-  background: var(--monokai-bg-lighter);
-  color: var(--monokai-green);
-  padding: 0.75rem 1rem;
-  text-align: left;
-  font-weight: 600;
-  border-bottom: 2px solid var(--border-color);
-}
-
-.post-content :deep(td) {
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--border-color);
-  color: var(--monokai-fg);
-}
-
-.post-content :deep(tr:hover) {
-  background: var(--monokai-bg-lighter);
 }
 
 /* Animations */
@@ -385,9 +333,23 @@ const formatDate = (date: string) => {
   }
 }
 
-/* Smooth transitions for interactive elements */
-.post-content :deep(*) {
-  transition: color 0.15s ease, background-color 0.15s ease;
+/* Responsive */
+@media (max-width: 768px) {
+  .article {
+    padding: 1.5rem;
+  }
+
+  .article-title {
+    font-size: 2rem;
+  }
+
+  .article-body :deep(h1) {
+    font-size: 1.6rem;
+  }
+
+  .article-body :deep(h2) {
+    font-size: 1.4rem;
+  }
 }
 </style>
 

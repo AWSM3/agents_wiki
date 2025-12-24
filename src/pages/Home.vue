@@ -1,103 +1,77 @@
 <template>
-  <main class="editor-content">
-    <div class="code-editor">
-      <!-- Line Numbers Column -->
-      <div class="line-numbers">
-        <div 
-          v-for="n in totalLines" 
-          :key="n" 
-          class="line-number"
-        >
-          {{ n }}
-        </div>
+  <main class="home-content">
+    <div class="welcome-section">
+      <h1 class="title">
+        <span class="keyword">const</span>
+        <span class="variable"> Content </span>
+        <span class="operator">= </span>
+        <span class="brace">{</span>
+      </h1>
+      
+      <div class="subtitle">
+        <span class="comment">// Про Агентов, методы и практики</span>
       </div>
+    </div>
 
-      <!-- Content Column -->
-      <div class="content-area">
-        <div class="code-block">
-          <span class="comment">// index.md</span>
-          <br>
-          <span class="comment">// ============================================</span>
-          <br><br>
+    <div
+      v-if="directories.length === 0"
+      class="empty-state"
+    >
+      <div class="empty-icon">📭</div>
+      <p class="empty-text">
+        <span class="keyword">throw new</span>
+        <span class="class-name"> Error</span>
+        <span class="brace">(</span>
+        <span class="string">"No content found"</span>
+        <span class="brace">)</span>
+      </p>
+    </div>
+
+    <div
+      v-for="dir in directories"
+      v-else
+      :key="dir"
+      class="category-section"
+    >
+      <h2 class="category-title">
+        <span class="property">{{ formatDirName(dir) }}</span>
+        <span class="operator">:</span>
+        <span class="brace"> [</span>
+      </h2>
+
+      <div class="posts-grid">
+        <router-link
+          v-for="post in getPostsByDir(dir)"
+          :key="`${post.dir}/${post.id}`"
+          :to="{ name: 'Post', params: { dir: post.dir, id: post.id } }"
+          class="post-card"
+        >
+          <div class="post-header">
+            <span class="post-icon">📄</span>
+            <span class="post-title">{{ post.title }}</span>
+          </div>
           
-          <span class="keyword">import</span> 
-          <span class="brace"> { </span>
-          <span class="variable">MarkdownPosts</span>
-          <span class="brace"> } </span>
-          <span class="keyword">from</span> 
-          <span class="string">'./content'</span>
-          <br><br>
-        </div>
-
-        <div
-          v-if="directories.length === 0"
-          class="warning-block"
-        >
-          <span class="keyword">console</span><span class="operator">.</span><span class="function">warn</span><span class="brace">(</span><span class="string">"No posts found. Add files to content/ directory"</span><span class="brace">)</span>
-        </div>
-
-        <div
-          v-for="(dir, dirIndex) in directories"
-          v-else
-          :key="dir"
-          class="directory-section"
-        >
-          <div class="section-header">
-            <span class="keyword">export</span>
-            <span class="keyword"> const </span>
-            <span class="class-name">{{ formatDirName(dir) }}</span>
-            <span class="operator"> = </span>
-            <span class="brace">[</span>
-          </div>
-
-          <div class="posts-list">
-            <router-link
-              v-for="(post, postIndex) in getPostsByDir(dir)"
-              :key="`${post.dir}/${post.id}`"
-              :to="{ name: 'Post', params: { dir: post.dir, id: post.id } }"
-              class="post-item"
-            >
-              <span class="indent">  </span>
-              <span class="brace">{</span>
-              <br>
-              <span class="indent">    </span>
-              <span class="property">title</span>
+          <div class="post-meta">
+            <span class="meta-item" v-if="post.meta.date">
+              <span class="property">date</span>
               <span class="operator">: </span>
-              <span class="string">"{{ post.title }}"</span>
-              <span class="operator">,</span>
-              <br>
-              <span class="indent">    </span>
-              <span class="property">file</span>
-              <span class="operator">: </span>
-              <span class="string">"{{ post.dir }}/{{ post.id }}.md"</span>
-              <span class="operator">,</span>
-              <br>
-              <span v-if="post.meta.date">
-                <span class="indent">    </span>
-                <span class="property">date</span>
-                <span class="operator">: </span>
-                <span class="number">"{{ formatDate(post.meta.date as string) }}"</span>
-                <span class="operator">,</span>
-                <br>
-              </span>
-              <span v-if="post.meta.description">
-                <span class="indent">    </span>
-                <span class="property">description</span>
-                <span class="operator">: </span>
-                <span class="string">"{{ post.meta.description }}"</span>
-                <br>
-              </span>
-              <span class="indent">  </span>
-              <span class="brace">}</span>
-              <span v-if="postIndex < getPostsByDir(dir).length - 1" class="operator">,</span>
-              <br>
-            </router-link>
+              <span class="string">{{ formatDate(post.meta.date as string) }}</span>
+            </span>
           </div>
-
-          <span class="brace">]</span>
-          <br><br>
-        </div>
+          
+          <p v-if="post.meta.description" class="post-description">
+            {{ post.meta.description }}
+          </p>
+        </router-link>
       </div>
+
+      <div class="category-footer">
+        <span class="brace">]</span>
+      </div>
+    </div>
+
+    <div class="closing-brace">
+      <span class="brace">}</span>
     </div>
   </main>
 </template>
@@ -118,72 +92,160 @@ const formatDirName = (dir: string) => {
 const formatDate = (date: string) => {
   return new Date(date).toLocaleDateString('en-US', {
     year: 'numeric',
-    month: 'long',
+    month: 'short',
     day: 'numeric',
   })
 }
-
-// Calculate total lines for line numbers
-const totalLines = computed(() => {
-  let lines = 10 // Base lines for header
-  directories.value.forEach(dir => {
-    lines += 3 // Section header
-    const posts = getPostsByDir(dir)
-    lines += posts.length * 8 // Each post takes ~8 lines
-    lines += 2 // Section footer
-  })
-  return Math.max(lines, 30)
-})
 </script>
 
 <style scoped>
-.editor-content {
+.home-content {
   height: 100%;
   overflow-y: auto;
   background: var(--monokai-bg);
   color: var(--monokai-fg);
-}
-
-.code-editor {
-  display: flex;
-  min-height: 100%;
+  padding: 2rem 3rem;
   font-family: 'Fira Code', 'JetBrains Mono', monospace;
-  font-size: 14px;
-  line-height: 1.6;
 }
 
-.line-numbers {
-  background: var(--monokai-bg);
+/* Welcome Section */
+.welcome-section {
+  margin-bottom: 3rem;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.subtitle {
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.empty-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.empty-text {
+  font-size: 1.1rem;
+}
+
+/* Category Section */
+.category-section {
+  margin: 2.5rem 0;
+  padding-left: 2rem;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.category-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.category-footer {
+  margin-top: 1rem;
+  font-size: 1.3rem;
+  padding-left: 0;
+}
+
+/* Posts Grid */
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+  padding-left: 2rem;
+}
+
+/* Post Card */
+.post-card {
+  background: var(--monokai-bg-light);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem;
+}
+
+.post-card:hover {
+  background: var(--monokai-bg-lighter);
+  border-color: var(--monokai-green);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.post-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.post-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.post-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--monokai-fg);
+  line-height: 1.3;
+}
+
+.post-card:hover .post-title {
+  color: var(--monokai-green);
+}
+
+.post-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.post-description {
   color: var(--monokai-comment);
-  padding: 1.5rem 0.5rem;
-  text-align: right;
-  user-select: none;
-  border-right: 1px solid var(--border-color);
-  min-width: 50px;
-  font-size: 13px;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin: 0;
 }
 
-.line-number {
-  padding: 0 0.75rem;
-  height: 1.6em;
-  transition: color 0.15s ease;
-}
-
-.line-number:hover {
+.post-card:hover .post-description {
   color: var(--monokai-fg);
 }
 
-.content-area {
-  flex: 1;
-  padding: 1.5rem 2rem;
-  overflow-x: auto;
+/* Closing Brace */
+.closing-brace {
+  margin-top: 3rem;
+  font-size: 2rem;
+  animation: fadeIn 0.5s ease-out;
 }
 
-.code-block {
-  margin-bottom: 1.5rem;
-}
-
-/* Syntax Highlighting - Monokai Style */
+/* Syntax Highlighting */
 .comment {
   color: var(--monokai-comment);
   font-style: italic;
@@ -196,15 +258,6 @@ const totalLines = computed(() => {
 
 .string {
   color: var(--monokai-yellow);
-}
-
-.number {
-  color: var(--monokai-purple);
-}
-
-.function {
-  color: var(--monokai-green);
-  font-style: italic;
 }
 
 .class-name {
@@ -228,65 +281,11 @@ const totalLines = computed(() => {
   color: var(--monokai-fg);
 }
 
-.indent {
-  display: inline-block;
-}
-
-/* Warning Block */
-.warning-block {
-  background: rgba(253, 151, 31, 0.1);
-  border-left: 3px solid var(--monokai-orange);
-  padding: 1rem 1.5rem;
-  margin: 1rem 0;
-  border-radius: 4px;
-}
-
-/* Directory Section */
-.directory-section {
-  margin: 2rem 0;
-  animation: fadeIn 0.3s ease-out;
-}
-
-.section-header {
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-}
-
-.posts-list {
-  margin-left: 1rem;
-}
-
-/* Post Item */
-.post-item {
-  display: block;
-  margin: 0.5rem 0;
-  padding: 0.75rem 1rem;
-  border-radius: 4px;
-  border-left: 2px solid transparent;
-  transition: all 0.2s ease;
-  cursor: pointer;
-  text-decoration: none;
-}
-
-.post-item:hover {
-  background: var(--monokai-bg-light);
-  border-left-color: var(--monokai-green);
-  transform: translateX(4px);
-}
-
-.post-item:hover .string {
-  color: var(--monokai-orange);
-}
-
-.post-item:hover .property {
-  color: var(--monokai-green);
-}
-
 /* Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -294,17 +293,19 @@ const totalLines = computed(() => {
   }
 }
 
-/* Cursor blink effect */
-@keyframes blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0; }
-}
+/* Responsive */
+@media (max-width: 768px) {
+  .home-content {
+    padding: 1.5rem;
+  }
 
-.section-header::after {
-  content: '▊';
-  color: var(--monokai-fg);
-  animation: blink 1s infinite;
-  margin-left: 2px;
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .posts-grid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
 
