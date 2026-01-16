@@ -8,18 +8,6 @@
             <span>← Back to Home</span>
           </router-link>
         </div>
-
-        <div class="meta-info">
-          <span class="comment">// {{ dir }}/{{ id }}.md</span>
-          <span v-if="post.meta.date" class="meta-date">
-            <span class="operator"> • </span>
-            <span>{{ formatDate(post.meta.date as string) }}</span>
-          </span>
-        </div>
-
-        <h1 class="article-title">
-          {{ post.title }}
-        </h1>
       </header>
 
       <!-- Content -->
@@ -79,8 +67,8 @@ const formatDate = (date: string) => {
 /* Header */
 .article-header {
   margin-bottom: 3rem;
-  padding-bottom: 2rem;
-  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0rem;
+  /* border-bottom: 1px solid var(--border-color); */
 }
 
 .breadcrumb {
