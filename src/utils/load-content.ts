@@ -128,7 +128,7 @@ function parseFrontmatter(text: string): { meta: Record<string, unknown>; conten
 
 async function loadMarkdownContent(): Promise<ParsedPost[]> {
   // Загружаем все .md файлы рекурсивно из content/
-  const modules = import.meta.glob<string>('/content/**/*.md', { as: 'raw' })
+  const modules = import.meta.glob<string>('/content/**/*.md', { query: '?raw', import: 'default' })
 
   const posts: ParsedPost[] = []
 

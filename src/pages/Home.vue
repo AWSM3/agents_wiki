@@ -205,7 +205,7 @@ onMounted(async () => {
   try {
     // Пытаемся загрузить README.md из корня content/
     // @ts-ignore - Vite's import.meta.glob is available at runtime
-    const readmeModule = import.meta.glob<string>('/content/README.md', { as: 'raw' })
+    const readmeModule = import.meta.glob<string>('/content/README.md', { query: '?raw', import: 'default' })
     const readmeLoader = readmeModule['/content/README.md']
     
     if (readmeLoader) {
