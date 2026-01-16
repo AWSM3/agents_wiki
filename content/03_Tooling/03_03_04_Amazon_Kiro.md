@@ -1,0 +1,40 @@
+# Tool Card: Amazon Kiro (agentic IDE, spec‑driven, autonomous agent)
+
+- **Owner**: DevEx / Platform (TBD)
+- **Статус**: Draft
+- **Last reviewed**: 2026-01-15
+- **Уровень**: Advanced
+- **Для ролей**: TL / Arch
+
+## Что это
+
+Agentic IDE, которая делает акцент на spec‑driven подходе (от прототипа к “production”). Некоторые режимы могут быть более автономными и долгоживущими.
+
+## Где запускается
+
+- IDE (локально/корпоративно, по варианту поставки)
+
+## Ключевые возможности
+
+- поддержка SDD/Spec‑first процессов
+- потенциально высокая автономность (нужны строгие guardrails)
+
+## Как задавать правила/инструкции
+
+- основной source‑of‑truth: Spec/ADR/TestPlan + AGENTS.md
+- запрет интеграционных действий без подтверждения (A4)
+
+## Риски/ограничения
+
+- автономность повышает риск несанкционированных действий
+- особенно важно соблюдать политику данных и ограничение tool‑use
+
+## Мини‑рецепты
+
+- “Сначала SPEC + план → затем патч → затем verify и отчёт”
+
+## Связанные страницы
+
+- [2.5 Паттерны agentic dev](../02_Foundations/02_05_Agentic_Dev_Patterns.md)
+- [6.5 Advanced guardrails](../06_Security_Compliance/06_05_Advanced_Guardrails.md)
+

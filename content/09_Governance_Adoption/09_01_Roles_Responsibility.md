@@ -1,0 +1,30 @@
+# 9.1. Роли и ответственность: AI‑champions, owners, security gatekeepers
+
+- **Owner**: Engineering Leadership (TBD)
+- **Статус**: Draft
+- **Last reviewed**: 2026-01-15
+- **Уровень**: Advanced
+- **Для ролей**: TL / Arch / SRE / Analyst
+
+## Зачем эта страница
+
+Без владения раздел быстро устаревает, а риски размазываются. Нужны владельцы и процесс обновления.
+
+## Роли (пример)
+
+- **AI‑champion (в команде)**: помогает внедрять практики, собирает обратную связь, “золотые примеры”.
+- **Owner страницы/плейбука**: отвечает за актуальность и качество конкретной страницы.
+- **Security gatekeeper**: утверждает политики данных/ретеншна, условия SaaS vs local, допуска инструментов.
+- **Platform/SRE**: поддерживает инфраструктуру (local models, CI агенты, MCP).
+
+## Мини‑RACI (рекомендация)
+
+- изменения в security policy → Security (A), TL/Arch (C), DevEx (R)
+- добавление инструмента → DevEx (R), Security (A), Platform (C)
+- обновление плейбуков → DevEx (A/R), команды (C)
+
+## Связанные страницы
+
+- [9.3 Политика актуальности](09_03_Freshness_Policy.md)
+- [9.4 Approved catalog/process](09_04_Approved_Catalog_Process.md)
+

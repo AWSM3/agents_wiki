@@ -179,6 +179,16 @@ const formatDate = (date: string) => {
   border-bottom-color: var(--monokai-yellow);
 }
 
+.article-body :deep(.internal-link) {
+  color: var(--monokai-green);
+  border-bottom: 1px dashed var(--monokai-green);
+}
+
+.article-body :deep(.internal-link:hover) {
+  color: var(--monokai-yellow);
+  border-bottom-color: var(--monokai-yellow);
+}
+
 .article-body :deep(code) {
   background: var(--monokai-bg-lighter);
   color: var(--monokai-pink);

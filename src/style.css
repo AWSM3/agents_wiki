@@ -3,28 +3,29 @@
 
 @layer base {
   :root {
-    /* Monokai Color Palette */
-    --monokai-bg: #272822;
-    --monokai-bg-light: #3E3D32;
-    --monokai-bg-lighter: #49483E;
-    --monokai-fg: #F8F8F2;
-    --monokai-comment: #75715E;
-    --monokai-green: #A6E22E;
-    --monokai-orange: #FD971F;
-    --monokai-pink: #F92672;
-    --monokai-purple: #AE81FF;
-    --monokai-yellow: #E6DB74;
-    --monokai-cyan: #66D9EF;
-    --monokai-red: #F92672;
+    /* Monokai Dark Theme - Eye-friendly version */
+    --monokai-bg: #1a1a1a;
+    --monokai-bg-light: #252525;
+    --monokai-bg-lighter: #2f2f2f;
+    --monokai-fg: #d4d4d4;
+    --monokai-comment: #6a6a6a;
+    --monokai-green: #8bb04e;
+    --monokai-orange: #d89614;
+    --monokai-pink: #d45a79;
+    --monokai-purple: #9370db;
+    --monokai-yellow: #c9b449;
+    --monokai-cyan: #5ba0c4;
+    --monokai-red: #d45a79;
+    --monokai-blue: #5ba0c4;
     
     /* IDE UI Colors */
-    --sidebar-bg: #21211E;
-    --sidebar-hover: #2D2D2A;
-    --statusbar-bg: #1E1E1E;
-    --tab-active: #272822;
-    --tab-inactive: #1E1E1E;
-    --border-color: #3E3D32;
-    --selection-bg: #49483E;
+    --sidebar-bg: #141414;
+    --sidebar-hover: #202020;
+    --statusbar-bg: #0f0f0f;
+    --tab-active: #1a1a1a;
+    --tab-inactive: #141414;
+    --border-color: #2a2a2a;
+    --selection-bg: #2f2f2f;
   }
 
   html {

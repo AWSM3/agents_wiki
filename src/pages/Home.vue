@@ -13,6 +13,17 @@
       </div>
     </div>
 
+    <!-- Readme Section -->
+    <div class="readme-section">
+      <div v-if="readmeHtml" class="readme-content" v-html="readmeHtml"></div>
+      <div v-else class="empty-state">
+        <div class="empty-icon">📄</div>
+        <p class="empty-text">
+          <span class="comment">// Выберите файл из списка ниже</span>
+        </p>
+      </div>
+    </div>
+
     <div
       v-if="directories.length === 0"
       class="empty-state"
@@ -31,7 +42,7 @@
       v-for="dir in directories"
       v-else
       :key="dir"
-      class="category-section"
+      class="category-section hidden"
     >
       <h2 class="category-title">
         <span class="property">{{ formatDirName(dir) }}</span>
@@ -77,11 +88,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { groupByDirectory } from '../utils/load-content'
+import { computed, ref, onMounted } from 'vue'
+import { groupByDirectory, createLinkRenderer } from '../utils/load-content'
+import { Marked } from 'marked'
 
 const grouped = groupByDirectory()
 const directories = computed(() => Array.from(grouped.keys()).sort())
+
+const readmeHtml = ref<string>('')
 
 const getPostsByDir = (dir: string) => grouped.get(dir) || []
 
@@ -96,6 +110,33 @@ const formatDate = (date: string) => {
     day: 'numeric',
   })
 }
+
+// Загружаем README.md при монтировании компонента
+onMounted(async () => {
+  try {
+    // Пытаемся загрузить README.md из корня content/
+    // @ts-ignore - Vite's import.meta.glob is available at runtime
+    const readmeModule = import.meta.glob<string>('/content/README.md', { as: 'raw' })
+    const readmeLoader = readmeModule['/content/README.md']
+    
+    if (readmeLoader) {
+      const readmeContent = await (readmeLoader as unknown as () => Promise<string>)()
+      
+      // Парсим frontmatter если есть
+      const match = readmeContent.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/)
+      const markdown = match ? match[2] : readmeContent
+      
+      // Создаем новый экземпляр Marked с кастомным рендерером
+      const markedInstance = new Marked()
+      markedInstance.use({ renderer: createLinkRenderer('') })
+      
+      // Конвертируем в HTML
+      readmeHtml.value = await markedInstance.parse(markdown)
+    }
+  } catch (error) {
+    console.log('README.md не найден в корневой директории content/')
+  }
+})
 </script>
 
 <style scoped>
@@ -110,8 +151,111 @@ const formatDate = (date: string) => {
 
 /* Welcome Section */
 .welcome-section {
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
   animation: fadeIn 0.5s ease-out;
+}
+
+/* README Section */
+.readme-section {
+  margin-bottom: 3rem;
+  animation: fadeIn 0.5s ease-out 0.2s;
+  animation-fill-mode: both;
+}
+
+.readme-content {
+  background: var(--monokai-bg-light);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 2rem;
+  line-height: 1.6;
+}
+
+.readme-content :deep(h1),
+.readme-content :deep(h2),
+.readme-content :deep(h3) {
+  color: var(--monokai-cyan);
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.readme-content :deep(h1) {
+  font-size: 1.8rem;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 0.5rem;
+}
+
+.readme-content :deep(h2) {
+  font-size: 1.4rem;
+}
+
+.readme-content :deep(h3) {
+  font-size: 1.1rem;
+}
+
+.readme-content :deep(p) {
+  margin-bottom: 1rem;
+  color: var(--monokai-fg);
+}
+
+.readme-content :deep(ul),
+.readme-content :deep(ol) {
+  margin: 1rem 0;
+  padding-left: 2rem;
+}
+
+.readme-content :deep(li) {
+  margin-bottom: 0.5rem;
+}
+
+.readme-content :deep(code) {
+  background: var(--monokai-bg);
+  color: var(--monokai-yellow);
+  padding: 0.2rem 0.4rem;
+  border-radius: 3px;
+  font-family: 'Fira Code', monospace;
+}
+
+.readme-content :deep(pre) {
+  background: var(--monokai-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 1rem;
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+
+.readme-content :deep(pre code) {
+  background: none;
+  padding: 0;
+}
+
+.readme-content :deep(a) {
+  color: var(--monokai-blue);
+  text-decoration: none;
+}
+
+.readme-content :deep(a:hover) {
+  color: var(--monokai-cyan);
+  text-decoration: underline;
+}
+
+.readme-content :deep(blockquote) {
+  border-left: 4px solid var(--monokai-purple);
+  margin: 1rem 0;
+  padding-left: 1rem;
+  color: var(--monokai-comment);
+  font-style: italic;
+}
+
+.readme-content :deep(.internal-link) {
+  color: var(--monokai-green);
+  text-decoration: none;
+  border-bottom: 1px dashed var(--monokai-green);
+}
+
+.readme-content :deep(.internal-link:hover) {
+  color: var(--monokai-yellow);
+  border-bottom-color: var(--monokai-yellow);
 }
 
 .title {

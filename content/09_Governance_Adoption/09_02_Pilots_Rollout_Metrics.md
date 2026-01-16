@@ -1,0 +1,42 @@
+# 9.2. Пилоты → rollout: как измеряем пользу и риски
+
+- **Owner**: Engineering Leadership / DevEx (TBD)
+- **Статус**: Draft
+- **Last reviewed**: 2026-01-15
+- **Уровень**: Advanced
+- **Для ролей**: TL / Analyst / DevEx
+
+## Зачем эта страница
+
+Чтобы внедрение AI было управляемым: мы понимаем, что улучшилось, и где растут риски/стоимость.
+
+## Метрики пользы (пример)
+
+- lead time, cycle time
+- PR/MR throughput
+- defect leakage
+- MTTR (если применимо)
+
+## Метрики рисков
+
+- инциденты утечек/нарушения политики
+- доля S2/S3 фэйлов
+- число откатов/регрессий после AI‑изменений
+
+## Метрики стоимости (FinOps)
+
+- стоимость токенов / бюджеты
+- время “на ревью/проверки”
+- сигналы для model switching (вверх/вниз)
+
+## Stop‑criteria (когда ставим на паузу)
+
+- повторяющиеся нарушения политики данных
+- рост S3 инцидентов
+- неконтролируемый рост стоимости без улучшения качества
+
+## Связанные страницы
+
+- [10.4 Rubrics/Severity](../10_Appendix/Liners_and_Rubrics/10_04_Failure_Taxonomy_Severity.md)
+- [7.5 Observability/metrics/cost](../07_Enterprise_Integration/07_05_Observability_Metrics_Cost.md)
+

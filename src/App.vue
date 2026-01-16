@@ -72,7 +72,7 @@
           <span 
             class="tab-close"
             @click.stop="closeTab(tab)"
-            v-if="openTabs.length > 1"
+            v-if="tab.type !== 'home'"
           >×</span>
         </div>
       </div>
@@ -167,22 +167,15 @@ const isActiveTab = (tab: Tab) => {
 }
 
 const openTab = (tab: Tab) => {
-  const existingTab = openTabs.value.find(t => t.path === tab.path)
-  if (!existingTab) {
-    openTabs.value.push(tab)
-  }
+  // Всегда заменяем единственную вкладку новым содержимым
+  openTabs.value = [tab]
 }
 
 const closeTab = (tab: Tab) => {
-  const index = openTabs.value.findIndex(t => t.path === tab.path)
-  if (index > -1) {
-    openTabs.value.splice(index, 1)
-    
-    // Navigate to another tab if closing active tab
-    if (isActiveTab(tab) && openTabs.value.length > 0) {
-      const newTab = openTabs.value[Math.max(0, index - 1)]
-      navigateToTab(newTab)
-    }
+  // Не даем закрыть единственную вкладку, или возвращаемся на Home
+  if (tab.type !== 'home') {
+    openTabs.value = [{ title: 'Home', path: '/', type: 'home' }]
+    router.push('/')
   }
 }
 

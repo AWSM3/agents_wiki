@@ -1,4 +1,4 @@
-import { marked } from 'marked'
+import { Marked } from 'marked'
 
 export interface ParsedPost {
   id: string
@@ -8,6 +8,84 @@ export interface ParsedPost {
   meta: Record<string, unknown>
   content: string
   html: string
+}
+
+/**
+ * Нормализует относительный путь к файлу
+ * Пример: "../08_Local_Models/08_00_INDEX.md" -> "08_Local_Models/08_00_INDEX"
+ */
+function normalizeMarkdownPath(href: string): string {
+  // Убираем расширение .md
+  let path = href.replace(/\.md$/, '')
+  
+  // Убираем начальные "../" и "./"
+  path = path.replace(/^(\.\.\/)+/, '').replace(/^\.\//, '')
+  
+  return path
+}
+
+/**
+ * Создает рендерер для marked с контекстом текущей директории
+ */
+export function createLinkRenderer(currentDir: string) {
+  return {
+    link(...args: any[]) {
+      // marked может вызвать функцию по-разному в зависимости от версии
+      // Старый API: link(href, title, text)
+      // Новый API: link(token)
+      let href: string, title: string | null, text: string
+      
+      if (args.length === 3) {
+        // Старый API
+        [href, title, text] = args
+      } else {
+        // Новый API - token объект
+        const token = args[0]
+        href = token.href || token
+        title = token.title || null
+        text = token.text || href
+      }
+      
+    
+    // Проверяем, является ли ссылка внутренней ссылкой на .md файл
+    if (href && href.endsWith('.md') && !href.startsWith('http')) {
+      // Нормализуем путь: убираем ../, ./ и .md
+      const normalizedPath = normalizeMarkdownPath(href)
+      
+      // Разделяем путь на части
+      const pathParts = normalizedPath.split('/').filter(Boolean)
+      
+      if (pathParts.length >= 2) {
+        // Берем все части кроме последней как директорию
+        const dir = pathParts.slice(0, -1).join('/')
+        const file = pathParts[pathParts.length - 1]
+        
+        // Проверяем, что dir и file не пустые
+        if (dir && file) {
+          // Создаем внутреннюю ссылку для Vue Router
+          const routerLink = `/post/${dir}/${file}`
+          const titleAttr = title ? ` title="${title}"` : ''
+          return `<a href="${routerLink}" class="internal-link"${titleAttr}>${text}</a>`
+        }
+      } else if (pathParts.length === 1) {
+        // Ссылка содержит только имя файла без директории
+        // Используем текущую директорию из контекста
+        const file = pathParts[0]
+        
+        if (currentDir && file) {
+          // Создаем внутреннюю ссылку с текущей директорией
+          const routerLink = `/post/${currentDir}/${file}`
+          const titleAttr = title ? ` title="${title}"` : ''
+          return `<a href="${routerLink}" class="internal-link"${titleAttr}>${text}</a>`
+        }
+      }
+    }
+      
+      // Для всех остальных ссылок возвращаем стандартный HTML
+      const titleAttr = title ? ` title="${title}"` : ''
+      return `<a href="${href}"${titleAttr}>${text}</a>`
+    }
+  }
 }
 
 /**
@@ -69,8 +147,12 @@ async function loadMarkdownContent(): Promise<ParsedPost[]> {
     // Парсим frontmatter (собственный парсер)
     const { meta, content: markdown } = parseFrontmatter(content)
 
+    // Создаем новый экземпляр Marked с кастомным рендерером
+    const markedInstance = new Marked()
+    markedInstance.use({ renderer: createLinkRenderer(dir) })
+    
     // Конвертируем Markdown в HTML
-    const html = await marked(markdown)
+    const html = await markedInstance.parse(markdown)
 
     posts.push({
       id,
