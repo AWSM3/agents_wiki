@@ -20,7 +20,7 @@ Terminal‑агент для многошаговых задач в репози
 ## Как задавать правила/инструкции
 
 - `CLAUDE.md` в корне репозитория (persistent context)
-- `AGENTS.md` как общий source‑of‑truth (см. [10.3](../Приложения/10_03_Templates_Index.md))
+- `AGENTS.md` как общий source‑of‑truth (см. [10.3](../Приложения/Шаблоны_Главная.md))
 - правила на запуск команд: только после approve
 
 ## Privacy/retention (что проверить)

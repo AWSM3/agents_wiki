@@ -31,6 +31,6 @@
 
 ## Связанные страницы
 
-- [10.5 Mermaid cheatsheet](../Приложения/10_05_Mermaid_Cheat_Sheet.md)
-- [10.3 Templates](../Приложения/10_03_Templates_Index.md)
+- [10.5 Mermaid cheatsheet](../Приложения/Mermaid_Cheat_Sheet.md)
+- [10.3 Шаблоны](../Приложения/Templates_Index.md)
 

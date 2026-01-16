@@ -11,11 +11,11 @@
       <div class="sidebar-header">
         <span class="sidebar-title">EXPLORER</span>
       </div>
-      
+
       <nav class="sidebar-content">
         <!-- Home Link -->
-        <router-link 
-          to="/" 
+        <router-link
+          to="/"
           class="file-item"
           :class="{ active: $route.path === '/' }"
           @click="openTab({ title: 'Home', path: '/', type: 'home' })"
@@ -23,42 +23,18 @@
           <span class="icon">🏠</span>
           <span>Home</span>
         </router-link>
-        
+
         <!-- Directories -->
-        <div 
-          v-for="dir in directories" 
-          :key="dir"
-          class="folder-section"
-        >
-          <div 
-            class="folder-header"
-            @click="toggleFolder(dir)"
-          >
-            <span class="chevron">{{ expandedFolders.has(dir) ? '▼' : '▶' }}</span>
-            <span class="icon">📁</span>
-            <span>{{ dir }}/</span>
-          </div>
-          
-          <div v-if="expandedFolders.has(dir)" class="folder-items">
-            <router-link
-              v-for="post in getPostsByDir(dir)"
-              :key="`${post.dir}/${post.id}`"
-              :to="{ name: 'Post', params: { dir: post.dir, id: post.id } }"
-              class="file-item nested"
-              :class="{ active: isActivePost(post.dir, post.id) }"
-              @click="openTab({ 
-                title: `${post.id}.md`, 
-                path: `/post/${post.dir}/${post.id}`,
-                dir: post.dir,
-                id: post.id,
-                type: 'post'
-              })"
-            >
-              <span class="icon">📄</span>
-              <span>{{ post.id }}.md</span>
-            </router-link>
-          </div>
-        </div>
+        <FolderTree
+          v-for="node in rootNodes"
+          :key="node.path"
+          :node="node"
+          :depth="0"
+          :expanded-folders="expandedFolders"
+          :toggle-folder="toggleFolder"
+          :is-active-post="isActivePost"
+          :open-tab="openTab"
+        />
       </nav>
     </aside>
     <div
@@ -71,7 +47,7 @@
     <main class="ide-main">
       <!-- Tab Bar -->
       <div class="tab-bar" v-if="openTabs.length > 0">
-        <div 
+        <div
           v-for="tab in openTabs"
           :key="tab.path"
           class="tab"
@@ -96,7 +72,7 @@
       <!-- Status Bar -->
       <div class="status-bar">
         <div class="status-left">
-          <button 
+          <button
             class="status-item clickable"
             @click="toggleSidebar"
           >
@@ -119,9 +95,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onBeforeUnmount } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { groupByDirectory } from './utils/load-content'
+import { buildDirectoryTree } from './utils/load-content'
+import FolderTree from './components/FolderTree.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -134,6 +111,7 @@ const sidebarWidth = ref(240)
 const isResizing = ref(false)
 const minSidebarWidth = 180
 const maxSidebarWidth = 520
+const sidebarStorageKey = 'sidebar-width'
 
 // Tabs state
 interface Tab {
@@ -149,21 +127,28 @@ const openTabs = ref<Tab[]>([
 ])
 
 // Directory data
-const grouped = groupByDirectory()
-const directories = computed(() => Array.from(grouped.keys()).sort())
-
-const getPostsByDir = (dir: string) => grouped.get(dir) || []
+const directoryTree = buildDirectoryTree()
+const rootNodes = computed(() => directoryTree.children)
 
 // Functions
 const toggleSidebar = () => {
   sidebarVisible.value = !sidebarVisible.value
 }
 
-const toggleFolder = (dir: string) => {
-  if (expandedFolders.value.has(dir)) {
-    expandedFolders.value.delete(dir)
+const toggleFolder = (path: string) => {
+  if (expandedFolders.value.has(path)) {
+    expandedFolders.value.delete(path)
   } else {
-    expandedFolders.value.add(dir)
+    expandedFolders.value.add(path)
+  }
+}
+
+const expandToPath = (path: string) => {
+  const parts = path.split('/').filter(Boolean)
+  let current = ''
+  for (const part of parts) {
+    current = current ? `${current}/${part}` : part
+    expandedFolders.value.add(current)
   }
 }
 
@@ -171,7 +156,30 @@ const clamp = (value: number, min: number, max: number) => {
   return Math.min(Math.max(value, min), max)
 }
 
-const startResize = (event: MouseEvent) => {
+const loadStoredSidebarWidth = () => {
+  try {
+    const storedValue = localStorage.getItem(sidebarStorageKey)
+    if (!storedValue) {
+      return
+    }
+    const parsed = Number(storedValue)
+    if (!Number.isNaN(parsed) && parsed > 0) {
+      sidebarWidth.value = clamp(parsed, minSidebarWidth, maxSidebarWidth)
+    }
+  } catch {
+    // ignore storage errors
+  }
+}
+
+const saveSidebarWidth = () => {
+  try {
+    localStorage.setItem(sidebarStorageKey, String(sidebarWidth.value))
+  } catch {
+    // ignore storage errors
+  }
+}
+
+const startResize = () => {
   if (!sidebarRef.value) {
     return
   }
@@ -191,6 +199,7 @@ const startResize = (event: MouseEvent) => {
     document.body.classList.remove('sidebar-resizing')
     window.removeEventListener('mousemove', handleMouseMove)
     window.removeEventListener('mouseup', stopResize)
+    saveSidebarWidth()
   }
 
   window.addEventListener('mousemove', handleMouseMove)
@@ -198,8 +207,8 @@ const startResize = (event: MouseEvent) => {
 }
 
 const isActivePost = (dir: string, id: string) => {
-  return route.name === 'Post' && 
-         route.params.dir === dir && 
+  return route.name === 'Post' &&
+         route.params.dir === dir &&
          route.params.id === id
 }
 
@@ -207,8 +216,8 @@ const isActiveTab = (tab: Tab) => {
   if (tab.type === 'home') {
     return route.path === '/'
   }
-  return route.name === 'Post' && 
-         route.params.dir === tab.dir && 
+  return route.name === 'Post' &&
+         route.params.dir === tab.dir &&
          route.params.id === tab.id
 }
 
@@ -246,9 +255,13 @@ watch(() => route.path, (newPath) => {
       type: 'post'
     })
     // Auto-expand folder
-    expandedFolders.value.add(dir)
+    expandToPath(dir)
   }
 }, { immediate: true })
+
+onMounted(() => {
+  loadStoredSidebarWidth()
+})
 
 onBeforeUnmount(() => {
   document.body.classList.remove('sidebar-resizing')
@@ -321,11 +334,11 @@ onBeforeUnmount(() => {
 }
 
 /* Folder Section */
-.folder-section {
+:deep(.folder-section) {
   margin: 0.25rem 0;
 }
 
-.folder-header {
+:deep(.folder-header) {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -337,11 +350,11 @@ onBeforeUnmount(() => {
   user-select: none;
 }
 
-.folder-header:hover {
+:deep(.folder-header:hover) {
   background: var(--sidebar-hover);
 }
 
-.chevron {
+:deep(.chevron) {
   font-size: 0.7rem;
   color: var(--monokai-comment);
   transition: transform 0.2s ease;
@@ -349,16 +362,18 @@ onBeforeUnmount(() => {
   display: inline-block;
 }
 
-.icon {
+:deep(.icon) {
   font-size: 1rem;
 }
 
-.folder-items {
+:deep(.folder-items) {
+  display: flex;
+  flex-direction: column;
   animation: slideDown 0.2s ease-out;
 }
 
 /* File Item */
-.file-item {
+:deep(.file-item) {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -371,17 +386,17 @@ onBeforeUnmount(() => {
   border-left: 2px solid transparent;
 }
 
-.file-item.nested {
+:deep(.file-item.nested) {
   padding-left: 3rem;
   margin-left: 0.5rem;
   border-left: 1px solid var(--border-color);
 }
 
-.file-item:hover {
+:deep(.file-item:hover) {
   background: var(--sidebar-hover);
 }
 
-.file-item.active {
+:deep(.file-item.active) {
   background: var(--monokai-bg-light);
   border-left-color: var(--monokai-green);
   color: var(--monokai-green);
@@ -421,7 +436,7 @@ onBeforeUnmount(() => {
   transition: all 0.15s ease;
   white-space: nowrap;
   min-width: 120px;
-  max-width: 200px;
+  max-width: 700px;
 }
 
 .tab.active {
@@ -541,7 +556,7 @@ onBeforeUnmount(() => {
   .sidebar-resizer {
     display: none;
   }
-  
+
   .tab {
     min-width: 100px;
     max-width: 150px;

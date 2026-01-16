@@ -188,6 +188,71 @@ export function groupByDirectory() {
   return grouped
 }
 
+export interface DirectoryNode {
+  name: string
+  path: string
+  children: DirectoryNode[]
+  posts: ParsedPost[]
+}
+
+type DirectoryNodeInternal = {
+  name: string
+  path: string
+  children: DirectoryNodeInternal[]
+  posts: ParsedPost[]
+  childMap: Map<string, DirectoryNodeInternal>
+}
+
+export function buildDirectoryTree(): DirectoryNode {
+  const root: DirectoryNodeInternal = {
+    name: '',
+    path: '',
+    children: [],
+    posts: [],
+    childMap: new Map(),
+  }
+
+  for (const post of posts) {
+    const parts = post.dir.split('/').filter(Boolean)
+    let current = root
+    let currentPath = ''
+
+    for (const part of parts) {
+      currentPath = currentPath ? `${currentPath}/${part}` : part
+
+      if (!current.childMap.has(part)) {
+        const node: DirectoryNodeInternal = {
+          name: part,
+          path: currentPath,
+          children: [],
+          posts: [],
+          childMap: new Map(),
+        }
+        current.childMap.set(part, node)
+        current.children.push(node)
+      }
+
+      current = current.childMap.get(part)!
+    }
+
+    current.posts.push(post)
+  }
+
+  const finalize = (node: DirectoryNodeInternal): DirectoryNode => {
+    node.children.sort((a, b) => a.name.localeCompare(b.name))
+    node.posts.sort((a, b) => a.title.localeCompare(b.title))
+
+    return {
+      name: node.name,
+      path: node.path,
+      posts: node.posts,
+      children: node.children.map(finalize),
+    }
+  }
+
+  return finalize(root)
+}
+
 // Поиск поста по dir и id
 export function findPost(dir: string, id: string) {
   return posts.find((p) => p.dir === dir && p.id === id)

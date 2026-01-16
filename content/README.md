@@ -6,7 +6,7 @@
 ## Зачем этот раздел
 
 Этот раздел — практическая методичка по безопасному и повторяемому применению AI‑инструментов 
-(IDE‑агенты и terminal‑агенты вроде [Cursor](https://cursor.com/), [Claude Code](https://claude.com/product/claude-code), [Roo Code](https://roocode.com/) / [Kilo Code](https://kilo.ai/) / [OpenCode](https://) / [Codex](https://openai.com/ru-RU/codex/) и др.) в инженерном цикле: \
+(IDE‑агенты и terminal‑агенты вроде [Cursor](https://cursor.com/), [Claude Code](https://claude.com/product/claude-code), [Roo Code](https://roocode.com/) / [Kilo Code](https://kilo.ai/) / [OpenCode](https://opencode.ai/) / [Codex](https://openai.com/ru-RU/codex/) и др.) в инженерном цикле: \
 **Spec → Plan → Implement → Verify → PR/MR**.
 
 ## Главная идея
@@ -14,11 +14,11 @@
 
 ## Как читать (рекомендуемый порядок)
 
-1. [0) Принципы раздела и как читать](Принципы/ИНДЕКС.md)
-2. [1) Введение и быстрый старт](Начало_Работы/ИНДЕКС.md)
-3. [4) Standard Workflow — единый процесс “Spec → Plan → Implement → Verify → PR”](Стандартный_Процесс/ИНДЕКС.md)
-4. [6) Security & Compliance — безопасное использование](Безопасность_Соответствие/ИНДЕКС.md)
-5. Далее — [Tooling](Инструменты/ИНДЕКС.md) и [Playbooks](Сценарии/ИНДЕКС.md) под ваши сценарии
+1. [0) Принципы раздела и как читать](Принципы/Главная.md)
+2. [1) Введение и быстрый старт](Начало_Работы/Главная.md)
+3. [4) Standard Workflow — единый процесс “Spec → Plan → Implement → Verify → PR”](Стандартный_Процесс/Главная.md)
+4. [6) Security & Compliance — безопасное использование](Безопасность_Соответствие/Главная.md)
+5. Далее — [Tooling](Инструменты/Главная.md) и [Playbooks](Сценарии/Главная.md) под ваши сценарии
 
 ## Быстрые ссылки
 
@@ -31,15 +31,15 @@
 
 ## Содержание (дерево разделов)
 
-- [00_Principles](Принципы/ИНДЕКС.md)
-- [01_Start_Here](Начало_Работы/ИНДЕКС.md)
-- [02_Foundations](Основы/ИНДЕКС.md)
-- [03_Tooling](Инструменты/ИНДЕКС.md)
-- [04_Standard_Workflow](Стандартный_Процесс/ИНДЕКС.md)
-- [05_Playbooks](Сценарии/ИНДЕКС.md)
-- [06_Security_Compliance](Безопасность_Соответствие/ИНДЕКС.md)
-- [07_Enterprise_Integration](Корпоративная_Интеграция/ИНДЕКС.md)
-- [08_Local_Models](Локальные_Модели/ИНДЕКС.md)
-- [09_Governance_Adoption](Управление_Внедрение/ИНДЕКС.md)
-- [10_Appendix](Приложения/ИНДЕКС.md)
+- [00_Principles](Принципы/Главная.md)
+- [01_Start_Here](Начало_Работы/Главная.md)
+- [02_Foundations](Основы/Главная.md)
+- [03_Tooling](Инструменты/Главная.md)
+- [04_Standard_Workflow](Стандартный_Процесс/Главная.md)
+- [05_Playbooks](Сценарии/Главная.md)
+- [06_Security_Compliance](Безопасность_Соответствие/Главная.md)
+- [07_Enterprise_Integration](Корпоративная_Интеграция/Главная.md)
+- [08_Local_Models](Локальные_Модели/Главная.md)
+- [09_Governance_Adoption](Управление_Внедрение/Главная.md)
+- [10_Appendix](Приложения/Главная.md)
 
