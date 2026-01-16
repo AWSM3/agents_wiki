@@ -1,10 +1,7 @@
 # 2.5. Паттерны агентной разработки: spec‑driven, plan‑then‑act, TDD‑agent, PR‑agent
 
-- **Owner**: DevEx (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Basic → Advanced
-- **Для ролей**: Dev / TL / QA / SRE
 
 ## Зачем эта страница
 

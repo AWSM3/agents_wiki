@@ -1,10 +1,7 @@
 # 7) Enterprise Integration — Интеграции в SDLC и платформу
 
-- **Owner**: Platform / SRE / Security (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Advanced
-- **Для ролей**: TL / Arch / SRE / Analyst
 
 ## Содержание раздела
 

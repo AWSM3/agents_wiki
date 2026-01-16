@@ -1,10 +1,7 @@
 # 6.6. Настройки privacy/retention по инструментам (практический справочник)
 
-- **Owner**: Security + DevEx (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Basic → Advanced
-- **Для ролей**: Dev / TL / SRE / Analyst
 
 ## Зачем эта страница
 

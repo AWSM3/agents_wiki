@@ -1,10 +1,7 @@
 # 1) START HERE — Введение и быстрый старт
 
-- **Owner**: DevEx (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Basic
-- **Для ролей**: Dev / TL / Arch / QA / SRE / Analyst
 
 ## Содержание раздела
 

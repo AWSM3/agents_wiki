@@ -1,10 +1,7 @@
 # 5.7. Playbook: SQL / миграции / оптимизация запросов
 
-- **Owner**: TL / DBA (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Advanced
-- **Для ролей**: Dev / TL / Analyst
 
 ## Когда применять
 

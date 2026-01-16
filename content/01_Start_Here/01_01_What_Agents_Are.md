@@ -1,10 +1,7 @@
 # 1.1. Что такое AI coding‑агенты и зачем они компании
 
-- **Owner**: DevEx / Platform (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Basic
-- **Для ролей**: Dev / TL / Arch / QA / SRE / Analyst
 
 ## Зачем эта страница
 

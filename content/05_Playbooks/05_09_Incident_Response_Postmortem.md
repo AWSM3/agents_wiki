@@ -1,10 +1,7 @@
 # 5.9. Playbook: incident response / postmortem
 
-- **Owner**: SRE / TL (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Advanced
-- **Для ролей**: SRE / TL
 
 ## Когда применять
 

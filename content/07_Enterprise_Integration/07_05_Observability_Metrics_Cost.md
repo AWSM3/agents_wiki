@@ -1,10 +1,7 @@
 # 7.5. Наблюдаемость/метрики/стоимость (FinOps для LLM)
 
-- **Owner**: Platform / Analyst (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Advanced
-- **Для ролей**: TL / SRE / Analyst
 
 ## Зачем эта страница
 

@@ -1,10 +1,7 @@
 # 5.3. Playbook: тесты (unit / integration / contract)
 
-- **Owner**: QA / DevEx (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Basic
-- **Для ролей**: Dev / QA / TL
 
 ## Когда применять
 

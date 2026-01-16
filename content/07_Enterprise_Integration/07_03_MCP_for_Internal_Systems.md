@@ -1,10 +1,7 @@
 # 7.3. MCP‑серверы для внутренних систем (Confluence/GitLab/логи/метрики)
 
-- **Owner**: Platform / Security (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Advanced
-- **Для ролей**: SRE / Security / Arch
 
 ## Зачем эта страница
 

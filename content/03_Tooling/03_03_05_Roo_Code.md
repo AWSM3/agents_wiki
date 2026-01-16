@@ -1,10 +1,7 @@
 # Tool Card: Roo Code (VS Code, open‑source агент)
 
-- **Owner**: DevEx (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Advanced
-- **Для ролей**: Dev / TL / Arch
 
 ## Что это
 

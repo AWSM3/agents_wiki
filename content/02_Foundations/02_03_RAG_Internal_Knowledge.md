@@ -1,10 +1,7 @@
 # 2.3. RAG и работа с внутренними знаниями (в т.ч. через MCP)
 
-- **Owner**: Platform / DevEx (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Advanced (core) / Basic (понимание)
-- **Для ролей**: Dev / TL / Arch / SRE / Analyst
 
 ## Зачем эта страница
 

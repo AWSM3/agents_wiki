@@ -1,8 +1,5 @@
 # ADR-XXXX (template): <title>
 
-- **Status**: Proposed / Accepted / Deprecated
-- **Date**: YYYY-MM-DD
-- **Owners**: …
 
 ## Context
 

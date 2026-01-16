@@ -1,10 +1,7 @@
 # 6.2. Threat model для coding‑агентов (prompt injection, supply chain, эксфильтрация)
 
-- **Owner**: Security (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Advanced
-- **Для ролей**: TL / Arch / SRE / Security
 
 ## Зачем эта страница
 

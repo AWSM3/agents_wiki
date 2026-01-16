@@ -1,10 +1,7 @@
 # 3.7. Провайдеры инференса: 1st/3rd‑party, шлюзы, ZDR и маршрутизация
 
-- **Owner**: Platform / Security (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Advanced
-- **Для ролей**: TL / Arch / SRE
 
 ## Зачем эта страница
 

@@ -1,10 +1,7 @@
 # 10.4.E. Уровни инженерной зрелости (E0–E4): prompting/context‑дисциплина
 
-- **Owner**: DevEx (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Basic
-- **Для ролей**: Dev / TL / QA / Analyst
 
 ## Зачем эта страница
 

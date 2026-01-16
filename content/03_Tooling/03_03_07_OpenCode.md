@@ -1,10 +1,7 @@
 # Tool Card: OpenCode (terminal/TUI, open‑source)
 
-- **Owner**: DevEx / SRE (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Advanced
-- **Для ролей**: Dev / SRE
 
 ## Что это
 

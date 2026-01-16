@@ -1,10 +1,7 @@
 # 4) Standard Workflow — “как мы работаем с агентами” (единый процесс)
 
-- **Owner**: DevEx / Engineering Managers (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Basic
-- **Для ролей**: Dev / TL / QA / SRE / Analyst
 
 ## Содержание раздела
 

@@ -1,10 +1,7 @@
 # 4.2. Definition of Done (DoD) для AI‑изменений
 
-- **Owner**: Engineering Managers / DevEx (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Basic
-- **Для ролей**: Dev / TL / QA / SRE
 
 ## Зачем эта страница
 

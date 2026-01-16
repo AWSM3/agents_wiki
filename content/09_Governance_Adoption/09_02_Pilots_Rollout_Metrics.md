@@ -1,10 +1,7 @@
 # 9.2. Пилоты → rollout: как измеряем пользу и риски
 
-- **Owner**: Engineering Leadership / DevEx (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Advanced
-- **Для ролей**: TL / Analyst / DevEx
 
 ## Зачем эта страница
 

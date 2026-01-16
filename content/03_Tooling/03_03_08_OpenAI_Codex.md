@@ -1,10 +1,7 @@
 # Tool Card: OpenAI Codex / Codex‑style CLI (coding agent)
 
-- **Owner**: DevEx / Platform (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Advanced (рекомендации) / Basic (понимание)
-- **Для ролей**: Dev / TL / SRE
 
 ## Что это
 

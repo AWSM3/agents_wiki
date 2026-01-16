@@ -1,10 +1,7 @@
 # Tool Card: OpenSpec (spec‑driven workflow для ассистентов)
 
-- **Owner**: DevEx / TL (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Advanced
-- **Для ролей**: TL / Arch / Analyst
 
 ## Что это
 

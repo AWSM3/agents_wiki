@@ -1,10 +1,7 @@
 # 10.3. Шаблоны файлов (Templates)
 
-- **Owner**: DevEx (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Basic
-- **Для ролей**: Dev / TL / QA / Analyst
 
 ## Зачем эта страница
 

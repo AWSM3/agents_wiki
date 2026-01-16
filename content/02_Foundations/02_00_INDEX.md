@@ -1,10 +1,7 @@
 # 2) Foundations — База по GenAI / LLM / агентам
 
-- **Owner**: DevEx (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Basic → Advanced
-- **Для ролей**: Dev / TL / Arch / QA / SRE / Analyst
 
 ## Содержание раздела
 

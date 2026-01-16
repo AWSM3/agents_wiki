@@ -1,10 +1,7 @@
 # 10.2. FAQ и “типовые ошибки”
 
-- **Owner**: DevEx (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Basic
-- **Для ролей**: Dev / TL / QA / SRE / Analyst
 
 ## Типовые ошибки
 

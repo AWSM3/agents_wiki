@@ -1,10 +1,7 @@
 # 7.1. GitLab‑ориентированный AI‑workflow (MR/Issues/Code Owners)
 
-- **Owner**: Platform / DevEx (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Advanced
-- **Для ролей**: TL / Arch / SRE
 
 ## Зачем эта страница
 

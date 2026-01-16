@@ -1,10 +1,7 @@
 # 3.3. Tool Cards — карточки инструментов (единый формат)
 
-- **Owner**: DevEx (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Basic → Advanced
-- **Для ролей**: Dev / TL / QA / SRE / Analyst
 
 ## Зачем эта страница
 

@@ -1,10 +1,7 @@
 # 5.8. Playbook: DevOps (GitLab CI, Ansible, Terraform, K8s, runbooks)
 
-- **Owner**: SRE / Platform (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Advanced
-- **Для ролей**: SRE / Dev
 
 ## Когда применять
 

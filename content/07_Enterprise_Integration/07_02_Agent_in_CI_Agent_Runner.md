@@ -1,10 +1,7 @@
 # 7.2. Агент в CI (безопасно): “agent‑runner” pipeline pattern
 
-- **Owner**: Platform / SRE / Security (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Advanced
-- **Для ролей**: SRE / Security / Arch
 
 ## Зачем эта страница
 

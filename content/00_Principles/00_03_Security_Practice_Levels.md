@@ -1,10 +1,7 @@
 # 0.3. Два уровня практик безопасности
 
-- **Owner**: Security / Platform / DevEx (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Basic → Advanced
-- **Для ролей**: Dev / TL / Arch / QA / SRE / Analyst
 
 ## Зачем эта страница
 

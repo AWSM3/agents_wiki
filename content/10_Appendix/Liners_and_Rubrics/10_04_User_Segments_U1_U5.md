@@ -1,10 +1,7 @@
 # 10.4.U. Сегменты пользователей (U1–U5)
 
-- **Owner**: DevEx / Enablement (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Basic
-- **Для ролей**: TL / Analyst / DevEx
 
 ## Зачем эта страница
 

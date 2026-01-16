@@ -1,10 +1,7 @@
 # 6) Security & Compliance — Безопасное использование (Basic + Advanced)
 
-- **Owner**: Security (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Basic → Advanced
-- **Для ролей**: Dev / TL / Arch / QA / SRE / Analyst
 
 ## Содержание раздела
 

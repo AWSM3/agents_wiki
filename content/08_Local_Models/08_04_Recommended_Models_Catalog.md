@@ -1,10 +1,7 @@
 # 8.4. Рекомендованные small‑модели ≤27B (каталог)
 
-- **Owner**: Platform / DevEx (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Advanced
-- **Для ролей**: Dev / TL / Arch / SRE
 
 ## Зачем эта страница
 

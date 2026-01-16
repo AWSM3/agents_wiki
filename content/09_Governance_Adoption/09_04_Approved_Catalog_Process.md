@@ -1,10 +1,7 @@
 # 9.4. Каталог approved‑инструментов/моделей и процесс добавления
 
-- **Owner**: DevEx + Security (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Advanced
-- **Для ролей**: TL / Arch / SRE / Analyst
 
 ## Зачем эта страница
 

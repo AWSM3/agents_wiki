@@ -1,10 +1,7 @@
 # Tool Card: Amazon Kiro (agentic IDE, spec‑driven, autonomous agent)
 
-- **Owner**: DevEx / Platform (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Advanced
-- **Для ролей**: TL / Arch
 
 ## Что это
 

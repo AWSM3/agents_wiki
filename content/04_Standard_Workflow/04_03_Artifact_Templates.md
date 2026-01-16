@@ -1,10 +1,7 @@
 # 4.3. Шаблоны артефактов: Spec, ADR, Test Plan, PR Checklist
 
-- **Owner**: DevEx (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Basic
-- **Для ролей**: Dev / TL / QA / Analyst
 
 ## Зачем эта страница
 

@@ -1,10 +1,7 @@
 # Tool Card: Google CLI (Gemini/…)
 
-- **Owner**: DevEx (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Advanced
-- **Для ролей**: Dev / TL / SRE
 
 ## Что это
 

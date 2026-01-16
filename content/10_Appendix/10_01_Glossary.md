@@ -1,10 +1,7 @@
 # 10.1. Глоссарий (LLM, агент, MCP, RAG, tool‑use…)
 
-- **Owner**: DevEx (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Basic
-- **Для ролей**: Dev / TL / Arch / QA / SRE / Analyst
 
 ## Core
 

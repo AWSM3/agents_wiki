@@ -1,10 +1,7 @@
 # 5.5. Playbook: дебаг по логам/трассам/профилям
 
-- **Owner**: SRE / Dev (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Basic → Advanced
-- **Для ролей**: Dev / SRE
 
 ## Когда применять
 

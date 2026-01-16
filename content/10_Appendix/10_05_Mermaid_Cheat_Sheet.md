@@ -1,10 +1,7 @@
 # 10.5. Mermaid‑шпаргалка (C4/sequence/flow/ERD/user journey)
 
-- **Owner**: DevEx (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Basic
-- **Для ролей**: Dev / TL / Arch / Analyst
 
 ## Flowchart (процесс)
 

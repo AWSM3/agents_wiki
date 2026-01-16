@@ -1,10 +1,7 @@
 # Шаблон страницы Wiki (методичка)
 
-- **Owner**: <роль/команда>
-- **Статус**: Draft / Validated / Deprecated
 - **Last reviewed**: YYYY-MM-DD
 - **Уровень**: Basic / Advanced
-- **Для ролей**: Dev / TL / Arch / QA / SRE / Analyst
 
 ## Зачем эта страница
 

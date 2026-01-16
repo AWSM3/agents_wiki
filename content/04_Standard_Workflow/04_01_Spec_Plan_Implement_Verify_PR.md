@@ -1,10 +1,7 @@
 # 4.1. Spec → Plan → Implement → Verify → PR (главная страница процесса)
 
-- **Owner**: DevEx / Engineering Managers (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Basic
-- **Для ролей**: Dev / TL / QA / SRE / Analyst
 
 ## Зачем эта страница
 

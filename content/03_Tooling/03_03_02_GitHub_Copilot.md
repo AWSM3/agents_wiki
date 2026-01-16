@@ -1,10 +1,7 @@
 # Tool Card: GitHub Copilot (IDE + agent mode)
 
-- **Owner**: DevEx (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Basic → Advanced
-- **Для ролей**: Dev / TL / QA
 
 ## Что это
 

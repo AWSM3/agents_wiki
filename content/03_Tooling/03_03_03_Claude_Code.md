@@ -1,10 +1,7 @@
 # Tool Card: Claude Code (terminal‑агент)
 
-- **Owner**: DevEx / SRE (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Basic → Advanced
-- **Для ролей**: Dev / TL / SRE
 
 ## Что это
 

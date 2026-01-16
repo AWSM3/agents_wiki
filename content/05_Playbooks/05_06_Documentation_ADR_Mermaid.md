@@ -1,10 +1,7 @@
 # 5.6. Playbook: документация / ADR / Mermaid
 
-- **Owner**: Analyst / TL (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Basic
-- **Для ролей**: Dev / TL / Analyst
 
 ## Когда применять
 

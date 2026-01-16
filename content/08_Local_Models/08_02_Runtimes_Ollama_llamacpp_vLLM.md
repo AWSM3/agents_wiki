@@ -1,10 +1,7 @@
 # 8.2. Рантаймы: Ollama / llama.cpp / vLLM (выбор под нагрузку)
 
-- **Owner**: Platform (TBD)
-- **Статус**: Draft
 - **Last reviewed**: 2026-01-15
 - **Уровень**: Advanced
-- **Для ролей**: Dev / Arch / SRE
 
 ## Зачем эта страница
 
