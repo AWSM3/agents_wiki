@@ -1,7 +1,13 @@
 <template>
   <div id="app" class="ide-container">
     <!-- Sidebar -->
-    <aside class="ide-sidebar" v-if="sidebarVisible">
+    <aside
+      v-if="sidebarVisible"
+      ref="sidebarRef"
+      class="ide-sidebar"
+      :class="{ resizing: isResizing }"
+      :style="{ width: `${sidebarWidth}px` }"
+    >
       <div class="sidebar-header">
         <span class="sidebar-title">EXPLORER</span>
       </div>
@@ -55,6 +61,11 @@
         </div>
       </nav>
     </aside>
+    <div
+      v-if="sidebarVisible"
+      class="sidebar-resizer"
+      @mousedown="startResize"
+    ></div>
 
     <!-- Main Content Area -->
     <main class="ide-main">
@@ -108,7 +119,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { groupByDirectory } from './utils/load-content'
 
@@ -118,6 +129,11 @@ const router = useRouter()
 // Sidebar state
 const sidebarVisible = ref(true)
 const expandedFolders = ref(new Set<string>())
+const sidebarRef = ref<HTMLElement | null>(null)
+const sidebarWidth = ref(240)
+const isResizing = ref(false)
+const minSidebarWidth = 180
+const maxSidebarWidth = 520
 
 // Tabs state
 interface Tab {
@@ -149,6 +165,36 @@ const toggleFolder = (dir: string) => {
   } else {
     expandedFolders.value.add(dir)
   }
+}
+
+const clamp = (value: number, min: number, max: number) => {
+  return Math.min(Math.max(value, min), max)
+}
+
+const startResize = (event: MouseEvent) => {
+  if (!sidebarRef.value) {
+    return
+  }
+
+  isResizing.value = true
+  document.body.classList.add('sidebar-resizing')
+
+  const sidebarLeft = sidebarRef.value.getBoundingClientRect().left
+
+  const handleMouseMove = (moveEvent: MouseEvent) => {
+    const nextWidth = clamp(moveEvent.clientX - sidebarLeft, minSidebarWidth, maxSidebarWidth)
+    sidebarWidth.value = nextWidth
+  }
+
+  const stopResize = () => {
+    isResizing.value = false
+    document.body.classList.remove('sidebar-resizing')
+    window.removeEventListener('mousemove', handleMouseMove)
+    window.removeEventListener('mouseup', stopResize)
+  }
+
+  window.addEventListener('mousemove', handleMouseMove)
+  window.addEventListener('mouseup', stopResize)
 }
 
 const isActivePost = (dir: string, id: string) => {
@@ -203,6 +249,10 @@ watch(() => route.path, (newPath) => {
     expandedFolders.value.add(dir)
   }
 }, { immediate: true })
+
+onBeforeUnmount(() => {
+  document.body.classList.remove('sidebar-resizing')
+})
 </script>
 
 <style scoped>
@@ -216,13 +266,39 @@ watch(() => route.path, (newPath) => {
 
 /* Sidebar */
 .ide-sidebar {
-  width: 240px;
   background: var(--sidebar-bg);
   border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
   overflow: hidden;
   transition: width 0.3s ease, margin-left 0.3s ease;
+}
+
+.ide-sidebar.resizing {
+  transition: none;
+}
+
+.sidebar-resizer {
+  width: 6px;
+  cursor: col-resize;
+  background: transparent;
+  flex: 0 0 auto;
+  position: relative;
+}
+
+.sidebar-resizer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 2px;
+  width: 2px;
+  background: transparent;
+  transition: background 0.15s ease;
+}
+
+.sidebar-resizer:hover::before {
+  background: var(--border-color);
 }
 
 .sidebar-header {
@@ -461,11 +537,20 @@ watch(() => route.path, (newPath) => {
     z-index: 100;
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
   }
+
+  .sidebar-resizer {
+    display: none;
+  }
   
   .tab {
     min-width: 100px;
     max-width: 150px;
   }
+}
+
+:global(body.sidebar-resizing) {
+  cursor: col-resize;
+  user-select: none;
 }
 </style>
 

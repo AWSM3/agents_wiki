@@ -14,8 +14,17 @@
     </div>
 
     <!-- Readme Section -->
-    <div class="readme-section">
-      <div v-if="readmeHtml" class="readme-content" v-html="readmeHtml"></div>
+    <div class="readme-section" ref="readmeSectionRef">
+      <div
+        v-if="readmeHtml"
+        ref="readmeResizableRef"
+        class="readme-resizable"
+        :class="{ resizing: isReadmeResizing }"
+        :style="readmeResizableStyle"
+      >
+        <div class="readme-content" v-html="readmeHtml"></div>
+        <div class="readme-resizer" @mousedown="startReadmeResize"></div>
+      </div>
       <div v-else class="empty-state">
         <div class="empty-icon">📄</div>
         <p class="empty-text">
@@ -88,7 +97,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted } from 'vue'
+import { computed, ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
 import { groupByDirectory, createLinkRenderer } from '../utils/load-content'
 import { Marked } from 'marked'
 
@@ -96,6 +105,12 @@ const grouped = groupByDirectory()
 const directories = computed(() => Array.from(grouped.keys()).sort())
 
 const readmeHtml = ref<string>('')
+const readmeSectionRef = ref<HTMLElement | null>(null)
+const readmeResizableRef = ref<HTMLElement | null>(null)
+const readmeWidth = ref<number | null>(null)
+const isReadmeResizing = ref(false)
+const readmeStorageKey = 'readme-content-width'
+const minReadmeWidth = 360
 
 const getPostsByDir = (dir: string) => grouped.get(dir) || []
 
@@ -111,8 +126,82 @@ const formatDate = (date: string) => {
   })
 }
 
+const clamp = (value: number, min: number, max: number) => {
+  return Math.min(Math.max(value, min), max)
+}
+
+const getReadmeMaxWidth = () => {
+  const containerWidth = readmeSectionRef.value?.clientWidth
+  return containerWidth && containerWidth > 0 ? containerWidth : 1200
+}
+
+const normalizeReadmeWidth = (value: number) => {
+  return clamp(value, minReadmeWidth, getReadmeMaxWidth())
+}
+
+const readmeResizableStyle = computed(() => {
+  if (!readmeWidth.value) {
+    return { width: '100%', maxWidth: '100%' }
+  }
+  return { width: `${readmeWidth.value}px`, maxWidth: '100%' }
+})
+
+const loadStoredReadmeWidth = () => {
+  try {
+    const storedValue = localStorage.getItem(readmeStorageKey)
+    if (!storedValue) {
+      return
+    }
+    const parsed = Number(storedValue)
+    if (!Number.isNaN(parsed) && parsed > 0) {
+      readmeWidth.value = normalizeReadmeWidth(parsed)
+    }
+  } catch {
+    // ignore storage errors
+  }
+}
+
+const saveReadmeWidth = () => {
+  if (!readmeWidth.value) {
+    return
+  }
+  try {
+    localStorage.setItem(readmeStorageKey, String(readmeWidth.value))
+  } catch {
+    // ignore storage errors
+  }
+}
+
+const startReadmeResize = (event: MouseEvent) => {
+  if (!readmeResizableRef.value) {
+    return
+  }
+
+  isReadmeResizing.value = true
+  document.body.classList.add('readme-resizing')
+
+  const readmeLeft = readmeResizableRef.value.getBoundingClientRect().left
+
+  const handleMouseMove = (moveEvent: MouseEvent) => {
+    const nextWidth = normalizeReadmeWidth(moveEvent.clientX - readmeLeft)
+    readmeWidth.value = nextWidth
+  }
+
+  const stopResize = () => {
+    isReadmeResizing.value = false
+    document.body.classList.remove('readme-resizing')
+    window.removeEventListener('mousemove', handleMouseMove)
+    window.removeEventListener('mouseup', stopResize)
+    saveReadmeWidth()
+  }
+
+  window.addEventListener('mousemove', handleMouseMove)
+  window.addEventListener('mouseup', stopResize)
+}
+
 // Загружаем README.md при монтировании компонента
 onMounted(async () => {
+  loadStoredReadmeWidth()
   try {
     // Пытаемся загрузить README.md из корня content/
     // @ts-ignore - Vite's import.meta.glob is available at runtime
@@ -136,6 +225,25 @@ onMounted(async () => {
   } catch (error) {
     console.log('README.md не найден в корневой директории content/')
   }
+})
+
+watch(readmeHtml, async (value) => {
+  if (!value) {
+    return
+  }
+
+  await nextTick()
+
+  if (!readmeWidth.value) {
+    const defaultWidth = getReadmeMaxWidth()
+    readmeWidth.value = normalizeReadmeWidth(Math.min(defaultWidth, 900))
+  } else {
+    readmeWidth.value = normalizeReadmeWidth(readmeWidth.value)
+  }
+})
+
+onBeforeUnmount(() => {
+  document.body.classList.remove('readme-resizing')
 })
 </script>
 
@@ -162,12 +270,46 @@ onMounted(async () => {
   animation-fill-mode: both;
 }
 
+.readme-resizable {
+  position: relative;
+  max-width: 100%;
+  transition: width 0.2s ease;
+}
+
+.readme-resizable.resizing {
+  transition: none;
+}
+
 .readme-content {
   background: var(--monokai-bg-light);
   border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 2rem;
   line-height: 1.6;
+}
+
+.readme-resizer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: -4px;
+  width: 8px;
+  cursor: col-resize;
+}
+
+.readme-resizer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 3px;
+  width: 2px;
+  background: transparent;
+  transition: background 0.15s ease;
+}
+
+.readme-resizer:hover::before {
+  background: var(--border-color);
 }
 
 .readme-content :deep(h1),
@@ -450,6 +592,15 @@ onMounted(async () => {
   .posts-grid {
     grid-template-columns: 1fr;
   }
+
+  .readme-resizer {
+    display: none;
+  }
+}
+
+:global(body.readme-resizing) {
+  cursor: col-resize;
+  user-select: none;
 }
 </style>
 

@@ -1,5 +1,4 @@
-# ADR-XXXX (template): <title>
-
+# ADR-XXXX (template):
 
 ## Context
 
